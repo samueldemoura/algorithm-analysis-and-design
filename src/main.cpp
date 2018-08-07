@@ -16,6 +16,8 @@ int main() {
 		case 1:
 			method = "Insertion Sort"; break;
 		case 2:
+			method = "Merge Sort"; break;
+		case 3:
 			method = "Quick Sort"; break;
 		default:
 			i = -1;
@@ -36,6 +38,8 @@ int main() {
 		case 1:
 			insertion_sort(array, array_size); break;
 		case 2:
+			merge_sort(array, array_size); break;
+		case 3:
 			quick_sort(array, array_size); break;
 		}
 
