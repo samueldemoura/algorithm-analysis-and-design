@@ -19,6 +19,8 @@ int main() {
 			method = "Merge Sort"; break;
 		case 3:
 			method = "Quick Sort"; break;
+		case 4:
+			method = "Counting Sort"; break;
 		default:
 			i = -1;
 		} if (i < 0) break; // Exit loop
@@ -41,6 +43,8 @@ int main() {
 			merge_sort(array, array_size); break;
 		case 3:
 			quick_sort(array, array_size); break;
+		case 4:
+			counting_sort(array, array_size, array_size + 1); break;
 		}
 
 		// Print out the sorted array

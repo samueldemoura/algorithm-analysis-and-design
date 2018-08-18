@@ -1,5 +1,3 @@
-//#include <algorithms>
-
 void merge(int *array, int low, int mid, int high) {
 	int aux[high - low + 1];
 	int i = 0;
