@@ -1,5 +1,3 @@
-#include <iostream>
-
 void counting_sort(int *array, int size, int k) {
 	int count[k + 1];
 	int aux[size];
