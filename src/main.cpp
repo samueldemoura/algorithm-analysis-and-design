@@ -21,6 +21,8 @@ int main() {
 			method = "Quick Sort"; break;
 		case 4:
 			method = "Counting Sort"; break;
+		case 5:
+			method = "Heap Sort"; break;
 		default:
 			i = -1;
 		} if (i < 0) break; // Exit loop
@@ -45,6 +47,8 @@ int main() {
 			quick_sort(array, array_size); break;
 		case 4:
 			counting_sort(array, array_size, array_size + 1); break;
+		case 5:
+			heap_sort(array, array_size); break;
 		}
 
 		// Print out the sorted array
