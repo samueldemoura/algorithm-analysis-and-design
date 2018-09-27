@@ -8,7 +8,7 @@ if __name__ == '__main__':
 	matrix_original = np.full([matrix_size, matrix_size], np.nan)
 
 	# Auxiliary matrix. Third dimension stores: cheapest cost
-	# to connect a vertex, which edge that cost refers to, if cost
+	# to connect a vertex, which vertex that cost refers to, if cost
 	# was previously calculated.
 	aux = np.full([matrix_size, matrix_size, 3], np.nan)
 
@@ -33,6 +33,8 @@ if __name__ == '__main__':
 	transfer it to the tree.
 	'''
 	while out_of_tree:
+		possible_connections = []
+
 		# Calculate connection cost estimates from each vertex in the tree
 		for vertex_from in in_tree:
 			for vertex_to in out_of_tree:
@@ -40,53 +42,28 @@ if __name__ == '__main__':
 				old_cost = aux[vertex_from, vertex_to, 0]
 				new_cost = matrix_original[vertex_from, vertex_to]
 
-				# TODO: instead of two checks, maybe make this line work:
-				#new_cost = matrix_original[vertex_to, vertex_from] if np.isnan(new_cost) else new_cost
+				# Treat case where we look in the bottom left of the matrix
+				if np.isnan(new_cost):
+					new_cost = matrix_original[vertex_to, vertex_from]
 
-				if (new_cost < old_cost or np.isnan(old_cost) and
-					np.isnan(aux[vertex_from, vertex_to, 2])):
+				if (new_cost < old_cost or
+					np.isnan(old_cost) and np.isnan(aux[vertex_from, vertex_to, 2])):
+					# Found a connection with smaller cost than previously seen
 					aux[vertex_from, vertex_to, 0] = new_cost
 					aux[vertex_from, vertex_to, 1] = vertex_from
 					aux[vertex_from, vertex_to, 2] = True
 
-				'''Ugly workaround: input is actually a symmetrical matrix
-				being treated as a diagonal matrix, so we must check with
-				coordinates inverted as well.'''
-				old_cost = aux[vertex_from, vertex_to, 0]
-				new_cost = matrix_original[vertex_to, vertex_from]
-
-				if (new_cost < old_cost or np.isnan(old_cost) and
-					np.isnan(aux[vertex_to, vertex_from, 2])):
-					aux[vertex_from, vertex_to, 0] = new_cost
-					aux[vertex_from, vertex_to, 1] = vertex_from
-					aux[vertex_from, vertex_to, 2] = True
+					possible_connections.append((vertex_from, vertex_to, new_cost))
 
 		# Find the minimum-weight edge
-		smallest = None
-		for vertex in in_tree:
-			try:
-				tmp = np.nanargmin(aux[vertex, :, 0])
-				if smallest == None or aux[vertex, tmp, 0] < aux[smallest[0], smallest[1], 0]:
-					smallest = (vertex, tmp)
-			except ValueError:
-				# All-NaN slice encountered.
-				# TODO: figure out if we should really just skip this?
-				continue
+		possible_connections.sort(key=lambda x: x[2])
+		smallest = possible_connections[0]
 
-		# And connect it to the tree
+		# Connect it to the tree
 		in_tree.append(smallest[1])
 		out_of_tree.remove(smallest[1])
 
-		# Write to the solution matrix
-		'''Ugly workaround: use min() & max() to guarantee we only write on the
-		top-right part of the solution matrix.'''
-		matrix_solution[min(smallest), max(smallest)] = aux[smallest[0], smallest[1], 0]
+		# Write to the solution matrix (min & max are to guarantee we write on the top right)
+		matrix_solution[min(smallest[0:2]), max(smallest[0:2])] = smallest[2]
 
-		# Remove from auxiliary matrix so it doesn't get returned again
-		aux[smallest[0], smallest[1], 0] = np.nan
-
-	print('=> Input matrix:')
-	print(matrix_original)
-
-	print('\n=> Solution matrix:')
 	print(matrix_solution)
