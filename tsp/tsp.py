@@ -267,10 +267,16 @@ class TSP():
     def vnd(self):
         '''Run the Variable Neighbourhood Descent algorithm.'''
         solution = self.build_initial_solution()
-        possible_searches = [self.swap_search, self.two_opt_search, self.reinsert_search]
+        search_functions = [self.swap_search, self.two_opt_search, self.reinsert_search]
 
-        for search_function in possible_searches:
-            solution = search_function(solution)
+        i = 0
+        while i < len(search_functions):
+            new_solution = search_functions[i](solution)
+            i += 1
+
+            if new_solution != solution:
+                solution = new_solution
+                i = 0
 
         return solution
 
