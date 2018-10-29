@@ -231,8 +231,10 @@ class TSP():
 
         return sol
 
-    def two_opt(self, solution, position):
-        return self.swap(solution, position, position + 1)
+    def two_opt(self, solution, pos_a, pos_b):
+        sol = solution[:pos_a] + list(reversed(solution[pos_a:pos_b + 1])) + solution[pos_b + 1:]
+
+        return sol
 
     def reinsert(self, solution, position):
         best_solution = solution
@@ -275,10 +277,11 @@ class TSP():
         best_solution = solution.copy()
 
         for i in range(0, self.dimension - 2):
-            sol = self.two_opt(solution, i)
-            if self.sum(sol) < self.sum(best_solution) and self.is_viable_solution(sol):
-                inform(self.sum(sol), 'two_opt_search')
-                best_solution = sol
+            for j in range(i + 1, self.dimension - 2):
+                sol = self.two_opt(solution, i, j)
+                if self.sum(sol) < self.sum(best_solution) and self.is_viable_solution(sol):
+                    inform(self.sum(sol), 'two_opt_search')
+                    best_solution = sol
 
         return best_solution
 
